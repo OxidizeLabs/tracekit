@@ -1,0 +1,7 @@
+# template Rust toolchain configuration
+# This standardizes tooling (rustfmt/clippy) and targets; the Rust version tracks the latest stable.
+
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]
+targets = ["x86_64-unknown-linux-gnu", "x86_64-apple-darwin", "aarch64-apple-darwin"]

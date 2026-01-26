@@ -1,0 +1,70 @@
+[package]
+name = "template"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["Thomas Korrison <ferrite.db@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Template repository for Rust-based projects."
+repository = "https://github.com/OxidizeLabs/template"
+readme = "README.md"
+keywords = ["template", "rust"]
+categories = ["development-tools"]
+exclude = ["/.idea/", "/.DS_Store", "/**/.DS_Store"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[features]
+
+[dependencies]
+
+[dev-dependencies]
+
+[[bench]]
+name = "bench"
+harness = false
+
+# Development profile - optimized for fast compilation and good debugging
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+panic = "unwind"
+incremental = true
+codegen-units = 256
+
+# Test profile - balanced for test execution speed vs debugging
+[profile.test]
+opt-level = 1
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+incremental = true
+codegen-units = 256
+
+# Release profile - maximum performance for production
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = "fat"
+panic = "abort"
+codegen-units = 1
+strip = true
+
+# Benchmark profile - optimized for consistent performance measurement
+[profile.bench]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = "thin"
+codegen-units = 1
+strip = true
