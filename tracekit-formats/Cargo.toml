@@ -17,10 +17,14 @@ rustdoc-args = ["--cfg", "docsrs"]
 targets = ["x86_64-unknown-linux-gnu"]
 
 [features]
-default = []
+default = ["arc", "lirs", "csv"]
+arc = []
+lirs = []
+csv = []
+cachelib = []
 jsonl = ["serde", "serde_json"]
 compression = ["flate2"]
-full = ["jsonl", "compression"]
+full = ["arc", "lirs", "csv", "cachelib", "jsonl", "compression"]
 
 [dependencies]
 tracekit = { workspace = true }

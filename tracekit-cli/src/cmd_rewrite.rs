@@ -26,10 +26,20 @@ pub struct RewriteArgs {
     output_format: Format,
 }
 
-#[derive(Clone, Copy, clap::ValueEnum)]
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
 pub enum Format {
+    /// Simple format: one key per line
     KeyOnly,
+    /// JSON Lines format
     Jsonl,
+    /// ARC trace format (space-separated: timestamp key size)
+    Arc,
+    /// LIRS trace format (one block number per line)
+    Lirs,
+    /// CSV format
+    Csv,
+    /// Cachelib CSV format
+    Cachelib,
 }
 
 pub fn run(args: RewriteArgs) -> Result<(), Box<dyn std::error::Error>> {
@@ -40,9 +50,22 @@ pub fn run(args: RewriteArgs) -> Result<(), Box<dyn std::error::Error>> {
 
     let mut count = 0u64;
 
-    match (args.input_format, args.output_format) {
-        (Format::KeyOnly, Format::KeyOnly) => {
-            let mut source = KeyOnlyReader::new(reader);
+    // Read events from input format (using Box<dyn EventSource> for flexibility)
+    let mut source: Box<dyn EventSource> = match args.input_format {
+        Format::KeyOnly => Box::new(KeyOnlyReader::new(reader)),
+        Format::Jsonl => Box::new(tracekit_formats::JsonlReader::new(reader)),
+        Format::Arc => Box::new(tracekit_formats::ArcReader::new(reader)),
+        Format::Lirs => Box::new(tracekit_formats::LirsReader::new(reader)),
+        Format::Csv => {
+            use tracekit_formats::{CsvConfig, CsvReader};
+            Box::new(CsvReader::new(reader, CsvConfig::key_only()))
+        }
+        Format::Cachelib => Box::new(tracekit_formats::CachelibReader::with_defaults(reader)),
+    };
+
+    // Write events to output format
+    match args.output_format {
+        Format::KeyOnly => {
             let mut out = tracekit_formats::KeyOnlyWriter::new(writer);
             while let Some(event) = source.next_event() {
                 out.write_key(event.key)?;
@@ -50,8 +73,7 @@ pub fn run(args: RewriteArgs) -> Result<(), Box<dyn std::error::Error>> {
             }
             out.flush()?;
         }
-        (Format::KeyOnly, Format::Jsonl) => {
-            let mut source = KeyOnlyReader::new(reader);
+        Format::Jsonl => {
             let mut out = tracekit_formats::JsonlWriter::new(writer);
             while let Some(event) = source.next_event() {
                 out.write_event(&event)?;
@@ -59,20 +81,14 @@ pub fn run(args: RewriteArgs) -> Result<(), Box<dyn std::error::Error>> {
             }
             out.flush()?;
         }
-        (Format::Jsonl, Format::KeyOnly) => {
-            let mut source = tracekit_formats::JsonlReader::new(reader);
+        Format::Arc | Format::Lirs | Format::Csv | Format::Cachelib => {
+            eprintln!(
+                "Warning: Output format {:?} uses the same representation as key-only.",
+                args.output_format
+            );
             let mut out = tracekit_formats::KeyOnlyWriter::new(writer);
             while let Some(event) = source.next_event() {
                 out.write_key(event.key)?;
-                count += 1;
-            }
-            out.flush()?;
-        }
-        (Format::Jsonl, Format::Jsonl) => {
-            let mut source = tracekit_formats::JsonlReader::new(reader);
-            let mut out = tracekit_formats::JsonlWriter::new(writer);
-            while let Some(event) = source.next_event() {
-                out.write_event(&event)?;
                 count += 1;
             }
             out.flush()?;

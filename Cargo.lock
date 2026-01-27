@@ -724,6 +724,7 @@ dependencies = [
  "rand_distr",
  "serde",
  "serde_json",
+ "tracekit-formats",
 ]
 
 [[package]]

@@ -24,8 +24,18 @@ pub struct SimulateArgs {
 
 #[derive(Clone, Copy, clap::ValueEnum)]
 pub enum InputFormat {
+    /// Simple format: one key per line
     KeyOnly,
+    /// JSON Lines format
     Jsonl,
+    /// ARC trace format (space-separated: timestamp key size)
+    Arc,
+    /// LIRS trace format (one block number per line)
+    Lirs,
+    /// CSV format (configurable columns)
+    Csv,
+    /// Cachelib CSV format
+    Cachelib,
 }
 
 pub fn run(args: SimulateArgs) -> Result<(), Box<dyn std::error::Error>> {
@@ -110,6 +120,31 @@ pub fn run(args: SimulateArgs) -> Result<(), Box<dyn std::error::Error>> {
         InputFormat::Jsonl => {
             use tracekit_formats::JsonlReader;
             let mut source = JsonlReader::new(reader);
+            let mut cache = SimpleLru::new(args.capacity);
+            simulate(&mut cache, &mut source)
+        }
+        InputFormat::Arc => {
+            use tracekit_formats::ArcReader;
+            let mut source = ArcReader::new(reader);
+            let mut cache = SimpleLru::new(args.capacity);
+            simulate(&mut cache, &mut source)
+        }
+        InputFormat::Lirs => {
+            use tracekit_formats::LirsReader;
+            let mut source = LirsReader::new(reader);
+            let mut cache = SimpleLru::new(args.capacity);
+            simulate(&mut cache, &mut source)
+        }
+        InputFormat::Csv => {
+            use tracekit_formats::{CsvConfig, CsvReader};
+            let config = CsvConfig::key_only(); // Default to key-only, can be extended
+            let mut source = CsvReader::new(reader, config);
+            let mut cache = SimpleLru::new(args.capacity);
+            simulate(&mut cache, &mut source)
+        }
+        InputFormat::Cachelib => {
+            use tracekit_formats::CachelibReader;
+            let mut source = CachelibReader::with_defaults(reader);
             let mut cache = SimpleLru::new(args.capacity);
             simulate(&mut cache, &mut source)
         }
