@@ -51,7 +51,6 @@ jobs:
           # Verify each crate can be packaged
           cargo package --package tracekit
           cargo package --package tracekit-formats
-          cargo package --package tracekit-cachekit
           cargo package --package tracekit-cli
 
   release:
@@ -82,7 +81,6 @@ jobs:
           sleep 30
 
           cargo publish --package tracekit-formats
-          cargo publish --package tracekit-cachekit
           echo "Waiting for crates.io to index dependencies..."
           sleep 30
 
