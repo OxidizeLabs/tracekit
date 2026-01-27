@@ -114,11 +114,7 @@ pub fn run(args: TracegenArgs) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     if let Some(path) = &args.output {
-        eprintln!(
-            "Generated {} events to {}",
-            args.count,
-            path.display()
-        );
+        eprintln!("Generated {} events to {}", args.count, path.display());
     }
 
     Ok(())

@@ -155,19 +155,19 @@ impl WorkloadGenerator {
         let bursty_zipfian = match workload {
             Workload::Bursty { base_exponent, .. } => {
                 Some(Zipf::new(universe as f64, base_exponent).unwrap())
-            },
+            }
             _ => None,
         };
         let flash_zipfian = match workload {
             Workload::FlashCrowd { base_exponent, .. } => {
                 Some(Zipf::new(universe as f64, base_exponent).unwrap())
-            },
+            }
             _ => None,
         };
         let scan_resistance_zipfian = match workload {
             Workload::ScanResistance { point_exponent, .. } => {
                 Some(Zipf::new(universe as f64, point_exponent).unwrap())
-            },
+            }
             _ => None,
         };
         Self {
@@ -223,19 +223,19 @@ impl WorkloadGenerator {
                 } else {
                     hot_size + (self.rng.random::<u64>() % (self.universe - hot_size))
                 }
-            },
+            }
 
             Workload::Scan => {
                 let key = self.scan_pos;
                 self.scan_pos = (self.scan_pos + 1) % self.universe;
                 key
-            },
+            }
 
             Workload::Zipfian { .. } => {
                 let zipf = self.zipfian.as_ref().unwrap();
                 let sample: f64 = zipf.sample(&mut self.rng);
                 (sample as u64).saturating_sub(1).min(self.universe - 1)
-            },
+            }
 
             Workload::ScrambledZipfian { .. } => {
                 let zipf = self.zipfian.as_ref().unwrap();
@@ -243,7 +243,7 @@ impl WorkloadGenerator {
                 let key = (sample as u64).saturating_sub(1).min(self.universe - 1);
                 // FNV-1a hash to scramble the key
                 fnv_hash(key) % self.universe
-            },
+            }
 
             Workload::Latest { .. } => {
                 let zipf = self.zipfian.as_ref().unwrap();
@@ -251,7 +251,7 @@ impl WorkloadGenerator {
                 let offset = (sample as u64).saturating_sub(1).min(self.universe - 1);
                 // Access keys near the most recent insert, wrapping around
                 self.insert_counter.wrapping_sub(offset) % self.universe
-            },
+            }
 
             Workload::ShiftingHotspot {
                 shift_interval,
@@ -271,7 +271,7 @@ impl WorkloadGenerator {
                 } else {
                     self.rng.random::<u64>() % self.universe
                 }
-            },
+            }
 
             Workload::Exponential { .. } => {
                 let exp = self.exponential.as_ref().unwrap();
@@ -279,7 +279,7 @@ impl WorkloadGenerator {
                 // Map exponential sample to key space, favoring lower keys
                 let key = (sample * (self.universe as f64 / 10.0)) as u64;
                 key.min(self.universe - 1)
-            },
+            }
 
             Workload::Pareto { .. } => {
                 let pareto = self.pareto.as_ref().unwrap();
@@ -287,7 +287,7 @@ impl WorkloadGenerator {
                 // Pareto samples start at scale (1.0), map to key space
                 let key = ((sample - 1.0) * (self.universe as f64 / 10.0)) as u64;
                 key.min(self.universe - 1)
-            },
+            }
 
             Workload::ScanResistance {
                 scan_fraction,
@@ -315,7 +315,7 @@ impl WorkloadGenerator {
                     let sample: f64 = zipf.sample(&mut self.rng);
                     (sample as u64).saturating_sub(1).min(self.universe - 1)
                 }
-            },
+            }
 
             Workload::Correlated {
                 stride,
@@ -337,13 +337,13 @@ impl WorkloadGenerator {
                     // Random access
                     self.rng.random::<u64>() % self.universe
                 }
-            },
+            }
 
             Workload::Loop { working_set_size } => {
                 let key = self.loop_pos % working_set_size.max(1);
                 self.loop_pos = self.loop_pos.wrapping_add(1);
                 key
-            },
+            }
 
             Workload::WorkingSetChurn {
                 working_set_size,
@@ -358,7 +358,7 @@ impl WorkloadGenerator {
                 // Access within current working set
                 let offset = self.rng.random::<u64>() % working_set_size;
                 (self.working_set_base + offset) % self.universe
-            },
+            }
 
             Workload::Bursty { hurst, .. } => {
                 // Simplified bursty model using Hurst parameter to control burst probability
@@ -384,7 +384,7 @@ impl WorkloadGenerator {
                 } else {
                     key
                 }
-            },
+            }
 
             Workload::FlashCrowd {
                 flash_prob,
@@ -422,7 +422,7 @@ impl WorkloadGenerator {
                     let sample: f64 = zipf.sample(&mut self.rng);
                     (sample as u64).saturating_sub(1).min(self.universe - 1)
                 }
-            },
+            }
 
             Workload::Mixture => {
                 // Default mixture: 70% Zipfian, 20% Scan-like, 10% Uniform
@@ -441,7 +441,7 @@ impl WorkloadGenerator {
                     // Uniform random
                     self.rng.random::<u64>() % self.universe
                 }
-            },
+            }
         }
     }
 }

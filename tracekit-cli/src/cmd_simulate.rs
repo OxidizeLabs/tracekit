@@ -32,7 +32,7 @@ pub fn run(args: SimulateArgs) -> Result<(), Box<dyn std::error::Error>> {
     use std::collections::HashMap;
     use std::fs::File;
     use std::io::BufReader;
-    use tracekit::{simulate, CacheModel};
+    use tracekit::{CacheModel, simulate};
     use tracekit_formats::KeyOnlyReader;
 
     // Simple LRU implementation for demonstration

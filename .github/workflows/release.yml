@@ -80,10 +80,10 @@ jobs:
           cargo publish --package tracekit
           echo "Waiting for crates.io to index tracekit..."
           sleep 30
-          
+
           cargo publish --package tracekit-formats
           cargo publish --package tracekit-cachekit
           echo "Waiting for crates.io to index dependencies..."
           sleep 30
-          
+
           cargo publish --package tracekit-cli

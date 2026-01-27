@@ -188,7 +188,7 @@ impl LatencySampler {
     #[inline]
     pub fn record(&mut self, duration: Duration) {
         self.count += 1;
-        if !self.count.is_multiple_of(self.sample_rate) {
+        if self.count % self.sample_rate != 0 {
             return;
         }
 
@@ -254,7 +254,6 @@ impl Default for BenchmarkConfig {
     }
 }
 
-
 // ============================================================================
 // Specialized Benchmarks
 // ============================================================================
@@ -263,7 +262,6 @@ impl Default for BenchmarkConfig {
 ///
 /// Returns (baseline_hit_rate, scan_hit_rate, recovery_hit_rate).
 /// A scan-resistant policy should have recovery_hit_rate close to baseline_hit_rate.
-
 /// Results from scan resistance measurement.
 #[derive(Debug, Clone, Copy)]
 pub struct ScanResistanceResult {
@@ -288,8 +286,6 @@ impl ScanResistanceResult {
         )
     }
 }
-
-
 
 /// Results from adaptation speed measurement.
 #[derive(Debug, Clone)]
