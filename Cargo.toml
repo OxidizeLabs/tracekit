@@ -1,31 +1,29 @@
-[package]
-name = "template"
+[workspace]
+members = ["tracekit", "tracekit-formats", "tracekit-cachekit", "tracekit-cli"]
+resolver = "2"
+
+[workspace.package]
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 authors = ["Thomas Korrison <ferrite.db@gmail.com>"]
 license = "MIT OR Apache-2.0"
-description = "Template repository for Rust-based projects."
-repository = "https://github.com/OxidizeLabs/template"
-readme = "README.md"
-keywords = ["template", "rust"]
-categories = ["development-tools"]
-exclude = ["/.idea/", "/.DS_Store", "/**/.DS_Store"]
+repository = "https://github.com/OxidizeLabs/tracekit"
 
-[package.metadata.docs.rs]
-all-features = true
-rustdoc-args = ["--cfg", "docsrs"]
-targets = ["x86_64-unknown-linux-gnu"]
+[workspace.dependencies]
+# Internal crates
+tracekit = { path = "tracekit", version = "0.1.0" }
+tracekit-formats = { path = "tracekit-formats", version = "0.1.0" }
+tracekit-cachekit = { path = "tracekit-cachekit", version = "0.1.0" }
 
-[features]
-
-[dependencies]
-
-[dev-dependencies]
-
-[[bench]]
-name = "bench"
-harness = false
+# External dependencies
+clap = { version = "4", features = ["derive"] }
+criterion = "0.5"
+rand = { version = "0.9", features = ["small_rng"] }
+rand_distr = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = "0.4"
 
 # Development profile - optimized for fast compilation and good debugging
 [profile.dev]

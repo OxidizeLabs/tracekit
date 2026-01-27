@@ -27,7 +27,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Run benchmarks
-        run: cargo bench --no-fail-fast | tee bench-output.txt
+        run: cargo bench --workspace --no-fail-fast | tee bench-output.txt
 
       - name: Upload benchmark output
         uses: actions/upload-artifact@v6

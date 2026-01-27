@@ -1,0 +1,24 @@
+[package]
+name = "tracekit-cli"
+description = "Command-line tools for trace generation, simulation, and result rendering."
+readme = "../README.md"
+keywords = ["cache", "trace", "cli", "benchmark"]
+categories = ["command-line-utilities", "development-tools"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "tracekit"
+path = "src/main.rs"
+
+[dependencies]
+tracekit = { workspace = true }
+tracekit-formats = { workspace = true, features = ["full"] }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }

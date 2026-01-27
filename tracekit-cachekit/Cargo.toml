@@ -1,0 +1,21 @@
+[package]
+name = "tracekit-cachekit"
+description = "Adapter connecting tracekit simulation to cachekit cache implementations."
+readme = "../README.md"
+keywords = ["cache", "trace", "simulation", "adapter"]
+categories = ["caching", "simulation"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+tracekit = { workspace = true }
+# cachekit = { path = "../../cachekit" }  # Uncomment when cachekit is available
