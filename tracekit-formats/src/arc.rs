@@ -5,7 +5,7 @@
 //! text format used in cache simulation research. Each line contains:
 //!
 //! ```text
-//! timestamp key [size]
+//! timestamp key \[size\]
 //! ```
 //!
 //! - `timestamp`: Unix timestamp or logical time (ignored in basic simulation)
@@ -27,7 +27,7 @@
 use std::io::BufRead;
 use tracekit::{Event, EventSource};
 
-/// Reads traces in ARC format (space-separated: timestamp key [size]).
+/// Reads traces in ARC format (space-separated: timestamp key \[size\]).
 pub struct ArcReader<R> {
     reader: R,
     line: String,
@@ -71,7 +71,7 @@ impl<R: BufRead> EventSource for ArcReader<R> {
                         continue; // Invalid line, skip
                     }
 
-                    // Parse: timestamp key [size]
+                    // Parse: timestamp key \[size\]
                     let key = match parts[1].parse::<u64>() {
                         Ok(k) => k,
                         Err(_) => continue, // Skip invalid key
